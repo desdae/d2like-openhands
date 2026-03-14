@@ -81,16 +81,18 @@ func _create_enemy(position: Vector2) -> Node2D:
     enemy.position = position
     enemy.name = "Enemy"
     
-    # Sprite
-    var sprite = Sprite2D.new()
+    # Sprite (using ColorRect for visibility)
+    var sprite = ColorRect.new()
     sprite.name = "Sprite"
-    sprite.modulate = Color(0.8, 0.2, 0.2)  # Red tint for enemies
+    sprite.size = Vector2(24, 24)
+    sprite.position = Vector2(-12, -12)
+    sprite.color = Color(0.8, 0.2, 0.2)  # Red
     enemy.add_child(sprite)
     
     # Collision
     var collision = CollisionShape2D.new()
     collision.shape = CircleShape2D.new()
-    collision.shape.radius = 16
+    collision.shape.radius = 12
     enemy.add_child(collision)
     
     # Enemy stats
@@ -105,17 +107,18 @@ func _create_player_character(player_data) -> void:
     player.name = "Player"
     player.position = Vector2(300, 300)  # Start in town
     
-    # Add sprite
-    var sprite = Sprite2D.new()
+    # Add sprite (using ColorRect for visibility)
+    var sprite = ColorRect.new()
     sprite.name = "Sprite"
-    # sprite.texture = load("res://assets/sprites/player.png")  # Placeholder
-    sprite.modulate = Color(0.3, 0.8, 0.3)  # Green tint for now
+    sprite.size = Vector2(24, 24)
+    sprite.position = Vector2(-12, -12)  # Center it
+    sprite.color = Color(0.3, 0.8, 0.3)  # Green
     player.add_child(sprite)
     
     # Add collision
     var collision = CollisionShape2D.new()
     collision.shape = CircleShape2D.new()
-    collision.shape.radius = 16
+    collision.shape.radius = 12
     player.add_child(collision)
     
     # Add camera
