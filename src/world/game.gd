@@ -11,6 +11,10 @@ extends Node2D
 
 var input_enabled: bool = true
 var selected_class: int = 0
+var player_moving: bool = false
+var player_attacking: bool = false
+var attack_cooldown: float = 0.0
+var enemy_ai_timer: float = 0.0
 
 func _ready() -> void:
     GameManager.set_game_state(GameManager.GameState.PLAYING)
@@ -40,6 +44,163 @@ func _ready() -> void:
     
     # Update UI
     UIManager.update_hud()
+
+func _process(delta: float) -> void:
+    if not input_enabled:
+        return
+    
+    _handle_input(delta)
+    _update_game(delta)
+    _update_animations(delta)
+
+func _handle_input(delta: float) -> void:
+    var direction = Vector2.ZERO
+    player_moving = false
+    
+    if Input.is_action_pressed("move_up"):
+        direction.y -= 1
+        player_moving = true
+    if Input.is_action_pressed("move_down"):
+        direction.y += 1
+        player_moving = true
+    if Input.is_action_pressed("move_left"):
+        direction.x -= 1
+        player_moving = true
+    if Input.is_action_pressed("move_right"):
+        direction.x += 1
+        player_moving = true
+    
+    # Attack cooldown
+    if attack_cooldown > 0:
+        attack_cooldown -= delta
+    
+    if direction.length() > 0:
+        direction = direction.normalized()
+        
+        # Isometric movement
+        var move_dir = _to_isometric(direction)
+        player.velocity = move_dir * 150
+        player.move_and_slide()
+        
+        # Face movement direction
+        _set_player_facing(direction)
+        
+        # Update player entity in combat
+        _update_player_entity()
+    
+    # Handle primary action (attack)
+    if Input.is_action_just_pressed("primary_action") and attack_cooldown <= 0:
+        _perform_attack()
+    
+    # Handle skill keys 1-8
+    for i in range(8):
+        if Input.is_action_just_pressed("skill_" + str(i + 1)):
+            _use_skill(i)
+
+func _update_animations(delta: float) -> void:
+    # Player walking animation
+    if player_moving:
+        _animate_player_walk(delta)
+    else:
+        _animate_player_idle(delta)
+    
+    # Player attack animation
+    if player_attacking:
+        _animate_player_attack(delta)
+    
+    # Enemy AI and animations
+    _update_enemy_ai(delta)
+
+func _animate_player_walk(delta: float) -> void:
+    # Bob up and down while walking
+    var bob_amount = sin(Time.get_ticks_msec() * 0.015) * 3
+    player.position.y += bob_amount * delta * 10
+
+func _animate_player_idle(delta: float) -> void:
+    # Gentle breathing animation
+    var breath = sin(Time.get_ticks_msec() * 0.003) * 1
+    player.scale = Vector2(1.0 + breath * 0.02, 1.0 - breath * 0.02)
+
+func _animate_player_attack(delta: float) -> void:
+    # Attack swing animation
+    var swing = sin(Time.get_ticks_msec() * 0.05) * 0.3
+    player.rotation = swing
+
+func _set_player_facing(direction: Vector2) -> void:
+    # Flip sprite based on movement direction
+    if direction.x < 0:
+        player.scale = Vector2(-1, 1)
+    elif direction.x > 0:
+        player.scale = Vector2(1, 1)
+
+func _update_enemy_ai(delta: float) -> void:
+    enemy_ai_timer += delta
+    
+    if enemy_ai_timer > 0.5:  # Update every 0.5 seconds
+        enemy_ai_timer = 0
+        
+        for enemy in enemies.get_children():
+            if not is_instance_valid(enemy):
+                continue
+                
+            var dist = player.global_position.distance_to(enemy.global_position)
+            
+            # Enemy is close - attack player
+            if dist < 60:
+                _enemy_attack(enemy, delta)
+            # Enemy is far - move towards player
+            elif dist < 300:
+                _enemy_move_towards_player(enemy, delta)
+            
+            # Animate enemy
+            _animate_enemy(enemy, delta)
+
+func _enemy_move_towards_player(enemy: Node2D, delta: float) -> void:
+    var direction = (player.global_position - enemy.global_position).normalized()
+    enemy.velocity = direction * 40  # Slower than player
+    enemy.global_position += enemy.velocity * delta
+    
+    # Face player
+    if direction.x < 0:
+        enemy.scale = Vector2(-1, 1)
+    else:
+        enemy.scale = Vector2(1, 1)
+
+func _enemy_attack(enemy: Node2D, delta: float) -> void:
+    # Simple attack animation
+    var attack_timer = enemy.get_meta("attack_timer", 0.0)
+    attack_timer += delta
+    enemy.set_meta("attack_timer", attack_timer)
+    
+    # Attack every 1 second
+    if attack_timer > 1.0:
+        enemy.set_meta("attack_timer", 0.0)
+        
+        # Get player data and damage
+        var player_data = PlayerManager.get_current_player()
+        if player_data:
+            var damage = enemy.get_meta("damage", 5)
+            player_data.current_hp -= damage
+            
+            # Flash player red
+            player.modulate = Color(1.5, 0.3, 0.3)
+            await get_tree().create_timer(0.2).timeout
+            player.modulate = Color(1, 1, 1)
+            
+            # Update UI
+            UIManager.update_hud()
+
+func _animate_enemy(enemy: Node2D, delta: float) -> void:
+    var dist = player.global_position.distance_to(enemy.global_position)
+    
+    if dist < 60:
+        # Attack animation - shake
+        var shake = sin(Time.get_ticks_msec() * 0.03) * 4
+        enemy.position.y += shake * delta * 20
+    elif dist < 300:
+        # Walking animation - bob
+        var bob = sin(Time.get_ticks_msec() * 0.01) * 2
+        enemy.position.y += bob * delta * 10
 
 func _create_ground() -> void:
     # Create a simple floor pattern
@@ -415,72 +576,6 @@ func _create_player_visual(player: Node2D, char_class: int) -> void:
             mace.position = Vector2(12, -10)
             mace.color = Color(0.6, 0.6, 0.65)
             player.add_child(mace)
-
-func _process(delta: float) -> void:
-    if not input_enabled:
-        return
-    
-    _handle_input(delta)
-    _update_game(delta)
-
-func _handle_input(delta: float) -> void:
-    var direction = Vector2.ZERO
-    
-    if Input.is_action_pressed("move_up"):
-        direction.y -= 1
-    if Input.is_action_pressed("move_down"):
-        direction.y += 1
-    if Input.is_action_pressed("move_left"):
-        direction.x -= 1
-    if Input.is_action_pressed("move_right"):
-        direction.x += 1
-    
-    if direction.length() > 0:
-        direction = direction.normalized()
-        
-        # Isometric movement
-        var move_dir = _to_isometric(direction)
-        player.velocity = move_dir * 200
-        player.move_and_slide()
-        
-        # Update player entity in combat
-        _update_player_entity()
-    
-    # Handle primary action (attack)
-    if Input.is_action_just_pressed("primary_action"):
-        _perform_attack()
-    
-    # Handle skill keys 1-8
-    for i in range(8):
-        if Input.is_action_just_pressed("skill_" + str(i + 1)):
-            _use_skill(i)
-
-func _perform_attack() -> void:
-    # Simple attack - damage nearby enemies
-    if not player:
-        return
-    
-    var attack_range = 50.0
-    var attack_damage = 10
-    
-    for enemy in enemies.get_children():
-        var dist = player.global_position.distance_to(enemy.global_position)
-        if dist < attack_range:
-            var hp = enemy.get_meta("hp", 50)
-            hp -= attack_damage
-            enemy.set_meta("hp", hp)
-            
-            # Knockback
-            var knockback_dir = (enemy.global_position - player.global_position).normalized()
-            enemy.global_position += knockback_dir * 20
-            
-            # Check if enemy died
-            if hp <= 0:
-                enemy.queue_free()
-
-func _use_skill(slot: int) -> void:
-    # Placeholder - skills would use the SkillDatabase
-    print("Skill slot ", slot, " pressed")
 
 func _to_isometric(direction: Vector2) -> Vector2:
     # Convert screen direction to isometric
