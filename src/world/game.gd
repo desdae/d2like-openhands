@@ -585,6 +585,45 @@ func _to_isometric(direction: Vector2) -> Vector2:
     )
     return iso
 
+func _perform_attack() -> void:
+    # Simple attack - damage nearby enemies
+    if not player:
+        return
+    
+    player_attacking = true
+    attack_cooldown = 0.5  # 0.5 second cooldown
+    
+    var attack_range = 50.0
+    var attack_damage = 15
+    
+    for enemy in enemies.get_children():
+        var dist = player.global_position.distance_to(enemy.global_position)
+        if dist < attack_range:
+            var hp = enemy.get_meta("hp", 50)
+            hp -= attack_damage
+            enemy.set_meta("hp", hp)
+            
+            # Knockback
+            var knockback_dir = (enemy.global_position - player.global_position).normalized()
+            enemy.global_position += knockback_dir * 30
+            
+            # Damage flash effect
+            enemy.modulate = Color(1.5, 0.5, 0.5)  # Flash red
+            await get_tree().create_timer(0.15).timeout
+            enemy.modulate = Color(1, 1, 1)  # Reset
+            
+            # Check if enemy died
+            if hp <= 0:
+                enemy.queue_free()
+    
+    # End attack animation after delay
+    await get_tree().create_timer(0.2).timeout
+    player_attacking = false
+
+func _use_skill(slot: int) -> void:
+    # Placeholder - skills would use the SkillDatabase
+    print("Skill slot ", slot, " pressed")
+
 func _update_game(delta: float) -> void:
     # Update UI bars
     UIManager.update_hud()
