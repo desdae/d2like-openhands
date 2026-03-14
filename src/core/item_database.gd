@@ -304,7 +304,7 @@ func _load_unique_items() -> void:
     }
 
 # Item generation functions
-func get_random_item(item_level: int, rarity: int = -1) -> ItemData:
+func get_random_item(item_level: int, rarity: int = -1):
     # Determine rarity if not specified
     if rarity < 0:
         rarity = _roll_rarity()
@@ -366,7 +366,7 @@ func _roll_rarity() -> int:
     else:
         return Rarity.NORMAL  # 70%
 
-func _add_affixes(item: ItemData, item_level: int, count: int) -> void:
+func _add_affixes(item, item_level: int, count: int) -> void:
     var prefix_count = count / 2 + (1 if randi() % 2 == 0 else 0)
     var suffix_count = count - prefix_count
     
@@ -393,7 +393,7 @@ func _get_random_affix(pool_name: String, item_level: int) -> Dictionary:
     
     return available.pick_random()
 
-func _apply_affix(item: ItemData, affix: Dictionary) -> void:
+func _apply_affix(item, affix: Dictionary) -> void:
     item.affixes.append(affix["name"])
     var stats = affix.get("stats", {})
     
@@ -446,7 +446,7 @@ func _apply_affix(item: ItemData, affix: Dictionary) -> void:
                 item.lightning_resist += stats[stat]
                 item.poison_resist += stats[stat]
 
-func _apply_unique_or_set(item: ItemData, rarity: int) -> void:
+func _apply_unique_or_set(item, rarity: int) -> void:
     var pool = unique_items if rarity == Rarity.UNIQUE else set_items
     
     if pool.is_empty():
