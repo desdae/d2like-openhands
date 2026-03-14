@@ -8,7 +8,7 @@ func _ready() -> void:
     pass
 
 func _on_start_game_pressed() -> void:
-    get_tree().change_scene_to_file("res://src/world/game.tscn")
+    get_tree().change_scene_to_file("res://src/world/character_select.tscn")
 
 func _on_options_pressed() -> void:
     pass  # TODO

@@ -71,26 +71,29 @@ func _create_hud() -> Control:
     hud.set_anchors_preset(Control.PRESET_FULL_RECT)
     hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
     
+    # Get viewport size
+    var viewport_size = get_viewport_rect().size
+    
     # Health bar (bottom left)
-    var hp_bar = _create_bar("hp_bar", Color(0.8, 0.1, 0.1), Vector2(20, -100), Vector2(200, 20))
+    var hp_bar = _create_bar("hp_bar", Color(0.8, 0.1, 0.1), Vector2(20, viewport_size.y - 140), Vector2(200, 20))
     hud.add_child(hp_bar)
     
     # Mana bar (below HP)
-    var mp_bar = _create_bar("mp_bar", Color(0.1, 0.2, 0.8), Vector2(20, -75), Vector2(200, 20))
+    var mp_bar = _create_bar("mp_bar", Color(0.1, 0.2, 0.8), Vector2(20, viewport_size.y - 115), Vector2(200, 20))
     hud.add_child(mp_bar)
     
     # Stamina bar (below Mana)
-    var stam_bar = _create_bar("stamina_bar", Color(0.3, 0.7, 0.2), Vector2(20, -50), Vector2(200, 20))
+    var stam_bar = _create_bar("stamina_bar", Color(0.3, 0.7, 0.2), Vector2(20, viewport_size.y - 90), Vector2(200, 20))
     hud.add_child(stam_bar)
     
-    # Experience bar (bottom)
-    var xp_bar = _create_bar("xp_bar", Color(0.7, 0.5, 0.1), Vector2(20, -25), Vector2(400, 10))
+    # Experience bar (above HP bar)
+    var xp_bar = _create_bar("xp_bar", Color(0.7, 0.5, 0.1), Vector2(20, viewport_size.y - 165), Vector2(400, 10))
     hud.add_child(xp_bar)
     
     # Gold display
     var gold_label = Label.new()
     gold_label.name = "gold_label"
-    gold_label.position = Vector2(20, -140)
+    gold_label.position = Vector2(20, viewport_size.y - 180)
     gold_label.text = "Gold: 0"
     gold_label.add_theme_font_size_override("font_size", 16)
     hud.add_child(gold_label)
@@ -98,7 +101,7 @@ func _create_hud() -> Control:
     # Level display
     var level_label = Label.new()
     level_label.name = "level_label"
-    level_label.position = Vector2(240, -95)
+    level_label.position = Vector2(240, viewport_size.y - 135)
     level_label.text = "Lv. 1"
     level_label.add_theme_font_size_override("font_size", 20)
     hud.add_child(level_label)
@@ -113,8 +116,9 @@ func _create_hud() -> Control:
     
     # Action bar (bottom center)
     var action_bar = _create_action_bar()
-    action_bar.position = Vector2(-200, -80)
-    action_bar.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+    action_bar.set_anchors_preset(Control.PRESET_HORIZONTAL_CENTER)
+    action_bar.position = Vector2(viewport_size.x / 2 - 200, viewport_size.y - 60)
+    action_bar.size = Vector2(400, 50)
     hud.add_child(action_bar)
     
     # FPS counter (top left, debug)

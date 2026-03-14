@@ -8,6 +8,7 @@ extends Node2D
 @onready var world_tilemap: TileMapLayer
 
 var input_enabled: bool = true
+var selected_class: int = 0
 
 func _ready() -> void:
     GameManager.set_game_state(GameManager.GameState.PLAYING)
@@ -16,8 +17,8 @@ func _ready() -> void:
     WorldManager.generate_world(1)
     WorldManager.enter_zone("town")
     
-    # Create player
-    var player_data = PlayerManager.create_player(PlayerManager.CharacterClass.MARAUDER, "Hero")
+    # Create player with selected class
+    var player_data = PlayerManager.create_player(GameManager.selected_class, "Hero")
     _create_player_character(player_data)
     
     # Connect signals

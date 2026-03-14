@@ -28,6 +28,7 @@ var current_state: GameState = GameState.TITLE
 var current_difficulty: Difficulty = Difficulty.NORMAL
 var is_multiplayer: bool = false
 var players_in_game: int = 1
+var selected_class: int = 0
 var game_time: float = 0.0
 var gold_dropped_on_death: int = 0
 
