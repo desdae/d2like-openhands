@@ -3,8 +3,6 @@
 
 extends Control
 
-signal class_selected(class_type: int)
-
 var classes = [
     {"id": 0, "name": "Marauder", "desc": "Strong warrior with melee skills", "color": Color(0.8, 0.2, 0.2)},
     {"id": 1, "name": "Sorceress", "desc": "Master of elemental magic", "color": Color(0.2, 0.4, 0.8)},
