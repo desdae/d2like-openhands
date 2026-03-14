@@ -72,7 +72,7 @@ func _create_hud() -> Control:
     hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
     
     # Get viewport size
-    var viewport_size = get_viewport_rect().size
+    var viewport_size = get_viewport().get_visible_rect().size
     
     # Health bar (bottom left)
     var hp_bar = _create_bar("hp_bar", Color(0.8, 0.1, 0.1), Vector2(20, viewport_size.y - 140), Vector2(200, 20))

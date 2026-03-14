@@ -36,7 +36,7 @@ func _create_ui() -> void:
     
     # Class buttons
     var spacing = 180
-    var start_x = get_viewport_rect().size.x / 2 - (classes.size() * spacing) / 2
+    var start_x = get_viewport().get_visible_rect().size.x / 2 - (classes.size() * spacing) / 2
     
     for i in range(classes.size()):
         var cls = classes[i]
