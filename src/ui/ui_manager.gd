@@ -116,7 +116,6 @@ func _create_hud() -> Control:
     
     # Action bar (bottom center)
     var action_bar = _create_action_bar()
-    action_bar.set_anchors_preset(Control.PRESET_HORIZONTAL_CENTER)
     action_bar.position = Vector2(viewport_size.x / 2 - 200, viewport_size.y - 60)
     action_bar.size = Vector2(400, 50)
     hud.add_child(action_bar)
