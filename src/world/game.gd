@@ -63,62 +63,231 @@ func _create_ground() -> void:
     ground.add_child(town_center)
 
 func _spawn_enemies() -> void:
-    # Spawn some test enemies
-    var enemy_positions = [
-        Vector2(400, 300),
-        Vector2(500, 200),
-        Vector2(350, 450),
-        Vector2(600, 400),
-        Vector2(200, 500),
+    # Spawn different enemy types
+    var enemy_types = [
+        {"type": "orc", "pos": Vector2(400, 300)},
+        {"type": "orc", "pos": Vector2(500, 200)},
+        {"type": "skeleton", "pos": Vector2(350, 450)},
+        {"type": "skeleton", "pos": Vector2(600, 400)},
+        {"type": "zombie", "pos": Vector2(200, 500)},
+        {"type": "zombie", "pos": Vector2(550, 350)},
     ]
     
-    for pos in enemy_positions:
-        var enemy = _create_enemy(pos)
+    for e in enemy_types:
+        var enemy = _create_enemy(e["type"], e["pos"])
         enemies.add_child(enemy)
 
-func _create_enemy(position: Vector2) -> Node2D:
+func _create_enemy(enemy_type: String, position: Vector2) -> Node2D:
     var enemy = CharacterBody2D.new()
     enemy.position = position
     enemy.name = "Enemy"
+    enemy.set_meta("type", enemy_type)
     
-    # Sprite (using ColorRect for visibility)
-    var sprite = ColorRect.new()
-    sprite.name = "Sprite"
-    sprite.size = Vector2(24, 24)
-    sprite.position = Vector2(-12, -12)
-    sprite.color = Color(0.8, 0.2, 0.2)  # Red
-    enemy.add_child(sprite)
+    # Create visual based on enemy type
+    _create_enemy_visual(enemy, enemy_type)
     
     # Collision
     var collision = CollisionShape2D.new()
     collision.shape = CircleShape2D.new()
-    collision.shape.radius = 12
+    collision.shape.radius = 14
     enemy.add_child(collision)
     
-    # Enemy stats
-    enemy.set_meta("hp", 50)
-    enemy.set_meta("max_hp", 50)
-    enemy.set_meta("damage", 5)
+    # Enemy stats based on type
+    match enemy_type:
+        "orc":
+            enemy.set_meta("hp", 80)
+            enemy.set_meta("max_hp", 80)
+            enemy.set_meta("damage", 15)
+            enemy.set_meta("name", "Orc")
+        "skeleton":
+            enemy.set_meta("hp", 40)
+            enemy.set_meta("max_hp", 40)
+            enemy.set_meta("damage", 10)
+            enemy.set_meta("name", "Skeleton")
+        "zombie":
+            enemy.set_meta("hp", 60)
+            enemy.set_meta("max_hp", 60)
+            enemy.set_meta("damage", 8)
+            enemy.set_meta("name", "Zombie")
     
     return enemy
+
+func _create_enemy_visual(enemy: Node2D, enemy_type: String) -> void:
+    match enemy_type:
+        "orc":
+            # Body
+            var body = ColorRect.new()
+            body.size = Vector2(28, 32)
+            body.position = Vector2(-14, -20)
+            body.color = Color(0.2, 0.5, 0.2)  # Dark green
+            enemy.add_child(body)
+            
+            # Head
+            var head = ColorRect.new()
+            head.size = Vector2(18, 18)
+            head.position = Vector2(-9, -38)
+            head.color = Color(0.3, 0.6, 0.3)  # Lighter green
+            enemy.add_child(head)
+            
+            # Tusks
+            var tusk_l = ColorRect.new()
+            tusk_l.size = Vector2(4, 8)
+            tusk_l.position = Vector2(-10, -22)
+            tusk_l.color = Color(0.9, 0.8, 0.6)
+            enemy.add_child(tusk_l)
+            
+            var tusk_r = ColorRect.new()
+            tusk_r.size = Vector2(4, 8)
+            tusk_r.position = Vector2(6, -22)
+            tusk_r.color = Color(0.9, 0.8, 0.6)
+            enemy.add_child(tusk_r)
+            
+            # Club
+            var club = ColorRect.new()
+            club.size = Vector2(6, 24)
+            club.position = Vector2(14, -10)
+            club.color = Color(0.4, 0.25, 0.1)  # Brown
+            enemy.add_child(club)
+            
+            # Eyes
+            var eye_l = ColorRect.new()
+            eye_l.size = Vector2(4, 4)
+            eye_l.position = Vector2(-7, -34)
+            eye_l.color = Color(1, 0.2, 0.2)  # Red eyes
+            enemy.add_child(eye_l)
+            
+            var eye_r = ColorRect.new()
+            eye_r.size = Vector2(4, 4)
+            eye_r.position = Vector2(3, -34)
+            eye_r.color = Color(1, 0.2, 0.2)
+            enemy.add_child(eye_r)
+            
+        "skeleton":
+            # Ribcage body
+            var body = ColorRect.new()
+            body.size = Vector2(20, 28)
+            body.position = Vector2(-10, -18)
+            body.color = Color(0.85, 0.82, 0.75)  # Bone white
+            enemy.add_child(body)
+            
+            # Ribs (dark lines)
+            for i in range(4):
+                var rib = ColorRect.new()
+                rib.size = Vector2(18, 2)
+                rib.position = Vector2(-9, -14 + i * 6)
+                rib.color = Color(0.3, 0.3, 0.3)
+                enemy.add_child(rib)
+            
+            # Skull
+            var skull = ColorRect.new()
+            skull.size = Vector2(20, 20)
+            skull.position = Vector2(-10, -40)
+            skull.color = Color(0.9, 0.87, 0.8)
+            enemy.add_child(skull)
+            
+            # Eye sockets (dark)
+            var socket_l = ColorRect.new()
+            socket_l.size = Vector2(5, 6)
+            socket_l.position = Vector2(-7, -36)
+            socket_l.color = Color(0.1, 0.1, 0.1)
+            enemy.add_child(socket_l)
+            
+            var socket_r = ColorRect.new()
+            socket_r.size = Vector2(5, 6)
+            socket_r.position = Vector2(2, -36)
+            socket_r.color = Color(0.1, 0.1, 0.1)
+            enemy.add_child(socket_r)
+            
+            # Jaw
+            var jaw = ColorRect.new()
+            jaw.size = Vector2(14, 6)
+            jaw.position = Vector2(-7, -22)
+            jaw.color = Color(0.8, 0.77, 0.7)
+            enemy.add_child(jaw)
+            
+            # Teeth
+            for i in range(3):
+                var tooth = ColorRect.new()
+                tooth.size = Vector2(3, 4)
+                tooth.position = Vector2(-5 + i * 4, -22)
+                tooth.color = Color(0.95, 0.92, 0.85)
+                enemy.add_child(tooth)
+            
+        "zombie":
+            # Body (tattered)
+            var body = ColorRect.new()
+            body.size = Vector2(24, 30)
+            body.position = Vector2(-12, -18)
+            body.color = Color(0.25, 0.35, 0.2)  # Rotten green
+            enemy.add_child(body)
+            
+            # Torn clothes effect
+            var clothes = ColorRect.new()
+            clothes.size = Vector2(22, 20)
+            clothes.position = Vector2(-11, -8)
+            clothes.color = Color(0.2, 0.15, 0.15)  # Dark brown tatters
+            enemy.add_child(clothes)
+            
+            # Head
+            var head = ColorRect.new()
+            head.size = Vector2(18, 18)
+            head.position = Vector2(-9, -36)
+            head.color = Color(0.3, 0.45, 0.25)  # Sickly green
+            enemy.add_child(head)
+            
+            # Missing eye
+            var missing_eye = ColorRect.new()
+            missing_eye.size = Vector2(5, 5)
+            missing_eye.position = Vector2(-6, -32)
+            missing_eye.color = Color(0.1, 0.05, 0.05)  # Dark hole
+            enemy.add_child(missing_eye)
+            
+            # Bulging eye
+            var eye = ColorRect.new()
+            eye.size = Vector2(5, 5)
+            eye.position = Vector2(2, -33)
+            eye.color = Color(0.9, 0.9, 0.3)  # Yellow eye
+            enemy.add_child(eye)
+            
+            # Drooling mouth
+            var mouth = ColorRect.new()
+            mouth.size = Vector2(8, 3)
+            mouth.position = Vector2(-4, -24)
+            mouth.color = Color(0.4, 0.2, 0.2)
+            enemy.add_child(mouth)
+            
+            var drool = ColorRect.new()
+            drool.size = Vector2(3, 6)
+            drool.position = Vector2(0, -21)
+            drool.color = Color(0.6, 0.8, 0.5)
+            enemy.add_child(drool)
+            
+            # Arms sticking out
+            var arm_l = ColorRect.new()
+            arm_l.size = Vector2(16, 6)
+            arm_l.position = Vector2(-20, -12)
+            arm_l.color = Color(0.28, 0.4, 0.22)
+            enemy.add_child(arm_l)
+            
+            var arm_r = ColorRect.new()
+            arm_r.size = Vector2(16, 6)
+            arm_r.position = Vector2(4, -10)
+            arm_r.color = Color(0.28, 0.4, 0.22)
+            enemy.add_child(arm_r)
 
 func _create_player_character(player_data) -> void:
     player = CharacterBody2D.new()
     player.name = "Player"
     player.position = Vector2(300, 300)  # Start in town
+    player.set_meta("class", GameManager.selected_class)
     
-    # Add sprite (using ColorRect for visibility)
-    var sprite = ColorRect.new()
-    sprite.name = "Sprite"
-    sprite.size = Vector2(24, 24)
-    sprite.position = Vector2(-12, -12)  # Center it
-    sprite.color = Color(0.3, 0.8, 0.3)  # Green
-    player.add_child(sprite)
+    # Create visual based on selected class
+    _create_player_visual(player, GameManager.selected_class)
     
-    # Add collision
+    # Collision
     var collision = CollisionShape2D.new()
     collision.shape = CircleShape2D.new()
-    collision.shape.radius = 12
+    collision.shape.radius = 14
     player.add_child(collision)
     
     # Add camera
@@ -128,6 +297,124 @@ func _create_player_character(player_data) -> void:
     player.add_child(camera)
     
     add_child(player)
+
+func _create_player_visual(player: Node2D, char_class: int) -> void:
+    # Body armor
+    var body = ColorRect.new()
+    body.size = Vector2(22, 26)
+    body.position = Vector2(-11, -16)
+    
+    match char_class:
+        0:  # Marauder
+            body.color = Color(0.6, 0.3, 0.2)  # Brown leather
+        1:  # Sorceress
+            body.color = Color(0.3, 0.3, 0.6)  # Blue robes
+        2:  # Shadow
+            body.color = Color(0.2, 0.2, 0.3)  # Dark leather
+        3:  # Necromancer
+            body.color = Color(0.3, 0.25, 0.3)  # Dark purple robes
+        4:  # Paladin
+            body.color = Color(0.7, 0.6, 0.2)  # Golden armor
+    player.add_child(body)
+    
+    # Head
+    var head = ColorRect.new()
+    head.size = Vector2(16, 16)
+    head.position = Vector2(-8, -32)
+    head.color = Color(0.9, 0.75, 0.6)  # Skin tone
+    player.add_child(head)
+    
+    # Hair/Helm
+    var hair = ColorRect.new()
+    hair.size = Vector2(18, 8)
+    hair.position = Vector2(-9, -40)
+    match char_class:
+        0: hair.color = Color(0.3, 0.2, 0.1)  # Brown hair
+        1: hair.color = Color(0.8, 0.8, 0.9)  # White wizard hat area
+        2: hair.color = Color(0.1, 0.1, 0.1)  # Black
+        3: hair.color = Color(0.2, 0.1, 0.2)  # Dark purple
+        4: hair.color = Color(0.8, 0.7, 0.3)  # Golden
+    player.add_child(hair)
+    
+    # Eyes
+    var eye_l = ColorRect.new()
+    eye_l.size = Vector2(3, 3)
+    eye_l.position = Vector2(-5, -29)
+    eye_l.color = Color(0.2, 0.4, 0.8)  # Blue eyes
+    player.add_child(eye_l)
+    
+    var eye_r = ColorRect.new()
+    eye_r.size = Vector2(3, 3)
+    eye_r.position = Vector2(2, -29)
+    eye_r.color = Color(0.2, 0.4, 0.8)
+    player.add_child(eye_r)
+    
+    # Weapon based on class
+    match char_class:
+        0:  # Marauder - sword
+            var sword = ColorRect.new()
+            sword.size = Vector2(4, 28)
+            sword.position = Vector2(12, -12)
+            sword.color = Color(0.7, 0.7, 0.75)  # Steel
+            player.add_child(sword)
+            
+            var hilt = ColorRect.new()
+            hilt.size = Vector2(8, 4)
+            hilt.position = Vector2(10, 14)
+            hilt.color = Color(0.5, 0.3, 0.1)  # Brown
+            player.add_child(hilt)
+            
+        1:  # Sorceress - staff
+            var staff = ColorRect.new()
+            staff.size = Vector2(4, 50)
+            staff.position = Vector2(14, -30)
+            staff.color = Color(0.4, 0.25, 0.1)  # Wood
+            player.add_child(staff)
+            
+            var orb = ColorRect.new()
+            orb.size = Vector2(8, 8)
+            orb.position = Vector2(12, -38)
+            orb.color = Color(0.3, 0.5, 0.9)  # Magic orb
+            player.add_child(orb)
+            
+        2:  # Shadow - dual daggers
+            var dagger_l = ColorRect.new()
+            dagger_l.size = Vector2(3, 16)
+            dagger_l.position = Vector2(-16, -8)
+            dagger_l.color = Color(0.5, 0.5, 0.55)
+            player.add_child(dagger_l)
+            
+            var dagger_r = ColorRect.new()
+            dagger_r.size = Vector2(3, 16)
+            dagger_r.position = Vector2(13, -8)
+            dagger_r.color = Color(0.5, 0.5, 0.55)
+            player.add_child(dagger_r)
+            
+        3:  # Necromancer - staff with skull
+            var staff = ColorRect.new()
+            staff.size = Vector2(4, 50)
+            staff.position = Vector2(14, -30)
+            staff.color = Color(0.25, 0.2, 0.15)
+            player.add_child(staff)
+            
+            var skull = ColorRect.new()
+            skull.size = Vector2(8, 8)
+            skull.position = Vector2(12, -38)
+            skull.color = Color(0.85, 0.82, 0.75)
+            player.add_child(skull)
+            
+        4:  # Paladin - shield + mace
+            var shield = ColorRect.new()
+            shield.size = Vector2(14, 18)
+            shield.position = Vector2(-20, -12)
+            shield.color = Color(0.7, 0.6, 0.2)  # Gold shield
+            player.add_child(shield)
+            
+            var mace = ColorRect.new()
+            mace.size = Vector2(4, 24)
+            mace.position = Vector2(12, -10)
+            mace.color = Color(0.6, 0.6, 0.65)
+            player.add_child(mace)
 
 func _process(delta: float) -> void:
     if not input_enabled:
