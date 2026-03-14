@@ -21,6 +21,9 @@ GameManager="*res://src/core/game_manager.gd"
 PlayerManager="*res://src/core/player_manager.gd"
 ItemDatabase="*res://src/core/item_database.gd"
 SkillDatabase="*res://src/core/skill_database.gd"
+CombatManager="*res://src/combat/combat_manager.gd"
+WorldManager="*res://src/world/world_manager.gd"
+UIManager="*res://src/ui/ui_manager.gd"
 
 [display]
 
