@@ -26,6 +26,8 @@ WorldManager="*res://src/world/world_manager.gd"
 UIManager="*res://src/ui/ui_manager.gd"
 QuestManager="*res://src/world/quest_manager.gd"
 SoundManager="*res://src/ui/sound_manager.gd"
+CutsceneManager="*res://src/world/cutscene_manager.gd"
+AchievementManager="*res://src/world/achievement_manager.gd"
 
 [display]
 
