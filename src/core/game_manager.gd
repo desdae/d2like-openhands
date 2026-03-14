@@ -36,7 +36,7 @@ const TILE_SIZE: int = 64
 const ISO_ANGLE: float = 0.707  # cos(45°)
 
 func _ready() -> void:
-    pause_mode = Node.PAUSE_MODE_PROCESS
+    process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
 func _process(delta: float) -> void:
     if current_state == GameState.PLAYING:

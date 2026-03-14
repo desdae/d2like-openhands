@@ -307,7 +307,7 @@ func _end_dialogue() -> void:
         dialogue_box.visible = false
     dialogue_ended.emit()
 
-func is_dialogue_active() -> bool:
+func has_active_dialogue() -> bool:
     return is_dialogue_active
 
 func set_flag(flag: String, value: bool = true) -> void:

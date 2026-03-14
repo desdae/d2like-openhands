@@ -268,7 +268,7 @@ func _load_affixes() -> void:
             {"name": "of Might", "stats": {"str_bonus": 10, "enhanced_damage": 20}},
             {"name": "of Craft", "stats": {"skill_bonuses": {"all_skills": 1}}},
             {"name": "of Absorption", "stats": {"life_leech": 3}},
-            {"name": of the Phoenix", "stats": {"fire_resist": 20, "max_fire": 5}},
+            {"name": "of the Phoenix", "stats": {"fire_resist": 20, "max_fire": 5}},
         ]
     }
 

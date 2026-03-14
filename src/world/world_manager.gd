@@ -135,11 +135,11 @@ func generate_world(act: int) -> void:
 
 func _generate_act_1() -> void:
     # Act 1: Wilderness -> Town -> Cave -> Crypt -> Boss
-    var town = _create_zone("town", "Rogue Encampment", Biome.TOWN, ZoneType.TOWN, 1, 30, 30, true)
-    var wilderness = _create_zone("wilderness_1", "Blood Moor", Biome.FOREST, ZoneType.WILDERNESS, 1, 40, 40, false)
-    var cave = _create_zone("cave_1", "Cold Plains", Biome.CAVE, ZoneType.DUNGEON, 2, 30, 30, true)
-    var crypt = _create_zone("crypt_1", "Burial Grounds", Biome.CRYPT, ZoneType.DUNGEON, 3, 25, 25, true)
-    var boss = _create_zone("boss_1", "The Pit", Biome.CRYPT, ZoneType.BOSS_LAIR, 4, 20, 20, true)
+    var town = _create_zone("town", "Rogue Encampment", Biome.TOWN, ZoneType.TOWN, 1, 30, 30)
+    var wilderness = _create_zone("wilderness_1", "Blood Moor", Biome.FOREST, ZoneType.WILDERNESS, 1, 40, 40)
+    var cave = _create_zone("cave_1", "Cold Plains", Biome.CAVE, ZoneType.DUNGEON, 2, 30, 30)
+    var crypt = _create_zone("crypt_1", "Burial Grounds", Biome.CRYPT, ZoneType.DUNGEON, 3, 25, 25)
+    var boss = _create_zone("boss_1", "The Pit", Biome.CRYPT, ZoneType.BOSS_LAIR, 4, 20, 20)
     
     _connect_zones(town, wilderness)
     _connect_zones(wilderness, cave)
@@ -152,11 +152,11 @@ func _generate_act_1() -> void:
     _spawn_boss(boss, "den_of_evil")
 
 func _generate_act_2() -> void:
-    var town = _create_zone("town_2", "Lut Gholein", Biome.TOWN, ZoneType.TOWN, 1, 30, 30, true)
-    var desert = _create_zone("desert_1", "Sewers", Biome.DESERT, ZoneType.WILDERNESS, 5, 40, 40, false)
-    var temple = _create_zone("temple_1", "Dry Hills", Biome.DESERT, ZoneType.DUNGEON, 6, 30, 30, true)
-    var ruins = _create_zone("ruins_1", "Far Oasis", Biome.DESERT, ZoneType.DUNGEON, 7, 25, 25, true)
-    var boss = _create_zone("boss_2", "Arcane Sanctuary", Biome.DESERT, ZoneType.BOSS_LAIR, 8, 20, 20, true)
+    var town = _create_zone("town_2", "Lut Gholein", Biome.TOWN, ZoneType.TOWN, 1, 30, 30)
+    var desert = _create_zone("desert_1", "Sewers", Biome.DESERT, ZoneType.WILDERNESS, 5, 40, 40)
+    var temple = _create_zone("temple_1", "Dry Hills", Biome.DESERT, ZoneType.DUNGEON, 6, 30, 30)
+    var ruins = _create_zone("ruins_1", "Far Oasis", Biome.DESERT, ZoneType.DUNGEON, 7, 25, 25)
+    var boss = _create_zone("boss_2", "Arcane Sanctuary", Biome.DESERT, ZoneType.BOSS_LAIR, 8, 20, 20)
     
     _connect_zones(town, desert)
     _connect_zones(desert, temple)
@@ -169,11 +169,11 @@ func _generate_act_2() -> void:
     _spawn_boss(boss, "summoner")
 
 func _generate_act_3() -> void:
-    var town = _create_zone("town_3", "Kurast", Biome.JUNGLE, ZoneType.TOWN, 1, 30, 30, true)
-    var jungle = _create_zone("jungle_1", "Spider Forest", Biome.JUNGLE, ZoneType.WILDERNESS, 10, 40, 40, false)
-    var temple = _create_zone("temple_2", "Spider Cave", Biome.JUNGLE, ZoneType.DUNGEON, 11, 30, 30, true)
-    var ruins = _create_zone("ruins_2", "Flayer Dungeon", Biome.JUNGLE, ZoneType.DUNGEON, 12, 25, 25, true)
-    var boss = _create_zone("boss_3", "Durance of Hate", Biome.JUNGLE, ZoneType.BOSS_LAIR, 13, 20, 20, true)
+    var town = _create_zone("town_3", "Kurast", Biome.JUNGLE, ZoneType.TOWN, 1, 30, 30)
+    var jungle = _create_zone("jungle_1", "Spider Forest", Biome.JUNGLE, ZoneType.WILDERNESS, 10, 40, 40)
+    var temple = _create_zone("temple_2", "Spider Cave", Biome.JUNGLE, ZoneType.DUNGEON, 11, 30, 30)
+    var ruins = _create_zone("ruins_2", "Flayer Dungeon", Biome.JUNGLE, ZoneType.DUNGEON, 12, 25, 25)
+    var boss = _create_zone("boss_3", "Durance of Hate", Biome.JUNGLE, ZoneType.BOSS_LAIR, 13, 20, 20)
     
     _connect_zones(town, jungle)
     _connect_zones(jungle, temple)
@@ -186,10 +186,10 @@ func _generate_act_3() -> void:
     _spawn_boss(boss, "mephisto")
 
 func _generate_act_4() -> void:
-    var town = _create_zone("town_4", "Pandemonium Fortress", Biome.HELL, ZoneType.TOWN, 1, 30, 30, true)
-    var fortress = _create_zone("fortress_1", "Outer Steppes", Biome.HELL, ZoneType.WILDERNESS, 20, 40, 40, false)
-    var city = _create_zone("city_1", "City of the Damned", Biome.HELL, ZoneType.DUNGEON, 21, 35, 35, true)
-    var chaos = _create_zone("chaos_1", "River of Flame", Biome.HELL, ZoneType.BOSS_LAIR, 22, 25, 25, true)
+    var town = _create_zone("town_4", "Pandemonium Fortress", Biome.HELL, ZoneType.TOWN, 1, 30, 30)
+    var fortress = _create_zone("fortress_1", "Outer Steppes", Biome.HELL, ZoneType.WILDERNESS, 20, 40, 40)
+    var city = _create_zone("city_1", "City of the Damned", Biome.HELL, ZoneType.DUNGEON, 21, 35, 35)
+    var chaos = _create_zone("chaos_1", "River of Flame", Biome.HELL, ZoneType.BOSS_LAIR, 22, 25, 25)
     
     _connect_zones(town, fortress)
     _connect_zones(fortress, city)
@@ -200,10 +200,10 @@ func _generate_act_4() -> void:
     _spawn_boss(chaos, "diablo")
 
 func _generate_act_5() -> void:
-    var town = _create_zone("town_5", "Harrogath", Biome.HELL, ZoneType.TOWN, 1, 30, 30, true)
-    var mountains = _create_zone("mountains_1", "Bloody Foothills", Biome.HELL, ZoneType.WILDERNESS, 30, 40, 40, false)
-    var baal = _create_zone("baal_1", "Arreat Summit", Biome.HELL, ZoneType.BOSS_LAIR, 31, 30, 30, true)
-    var chaos = _create_zone("chaos_2", "Worldstone Keep", Biome.HELL, ZoneType.BOSS_LAIR, 32, 25, 25, true)
+    var town = _create_zone("town_5", "Harrogath", Biome.HELL, ZoneType.TOWN, 1, 30, 30)
+    var mountains = _create_zone("mountains_1", "Bloody Foothills", Biome.HELL, ZoneType.WILDERNESS, 30, 40, 40)
+    var baal = _create_zone("baal_1", "Arreat Summit", Biome.HELL, ZoneType.BOSS_LAIR, 31, 30, 30)
+    var chaos = _create_zone("chaos_2", "Worldstone Keep", Biome.HELL, ZoneType.BOSS_LAIR, 32, 25, 25)
     
     _connect_zones(town, mountains)
     _connect_zones(mountains, baal)
