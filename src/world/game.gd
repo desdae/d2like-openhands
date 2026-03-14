@@ -6,12 +6,26 @@ extends Node2D
 @onready var player: CharacterBody2D
 @onready var camera: Camera2D
 @onready var world_tilemap: TileMapLayer
+@onready var enemies: Node2D
+@onready var ground: Node2D
 
 var input_enabled: bool = true
 var selected_class: int = 0
 
 func _ready() -> void:
     GameManager.set_game_state(GameManager.GameState.PLAYING)
+    
+    # Create ground layer
+    ground = Node2D.new()
+    ground.name = "Ground"
+    add_child(ground)
+    _create_ground()
+    
+    # Create enemies container
+    enemies = Node2D.new()
+    enemies.name = "Enemies"
+    add_child(enemies)
+    _spawn_enemies()
     
     # Initialize world
     WorldManager.generate_world(1)
@@ -26,6 +40,65 @@ func _ready() -> void:
     
     # Update UI
     UIManager.update_hud()
+
+func _create_ground() -> void:
+    # Create a simple floor pattern
+    for x in range(30):
+        for y in range(30):
+            var tile = ColorRect.new()
+            tile.position = Vector2(x * 32, y * 32)
+            tile.size = Vector2(32, 32)
+            # Checkerboard pattern
+            if (x + y) % 2 == 0:
+                tile.color = Color(0.15, 0.15, 0.12)
+            else:
+                tile.color = Color(0.12, 0.12, 0.1)
+            ground.add_child(tile)
+    
+    # Add some decoration (town center)
+    var town_center = ColorRect.new()
+    town_center.position = Vector2(250, 250)
+    town_center.size = Vector2(100, 80)
+    town_center.color = Color(0.3, 0.25, 0.2)
+    ground.add_child(town_center)
+
+func _spawn_enemies() -> void:
+    # Spawn some test enemies
+    var enemy_positions = [
+        Vector2(400, 300),
+        Vector2(500, 200),
+        Vector2(350, 450),
+        Vector2(600, 400),
+        Vector2(200, 500),
+    ]
+    
+    for pos in enemy_positions:
+        var enemy = _create_enemy(pos)
+        enemies.add_child(enemy)
+
+func _create_enemy(position: Vector2) -> Node2D:
+    var enemy = CharacterBody2D.new()
+    enemy.position = position
+    enemy.name = "Enemy"
+    
+    # Sprite
+    var sprite = Sprite2D.new()
+    sprite.name = "Sprite"
+    sprite.modulate = Color(0.8, 0.2, 0.2)  # Red tint for enemies
+    enemy.add_child(sprite)
+    
+    # Collision
+    var collision = CollisionShape2D.new()
+    collision.shape = CircleShape2D.new()
+    collision.shape.radius = 16
+    enemy.add_child(collision)
+    
+    # Enemy stats
+    enemy.set_meta("hp", 50)
+    enemy.set_meta("max_hp", 50)
+    enemy.set_meta("damage", 5)
+    
+    return enemy
 
 func _create_player_character(player_data) -> void:
     player = CharacterBody2D.new()
@@ -82,6 +155,42 @@ func _handle_input(delta: float) -> void:
         
         # Update player entity in combat
         _update_player_entity()
+    
+    # Handle primary action (attack)
+    if Input.is_action_just_pressed("primary_action"):
+        _perform_attack()
+    
+    # Handle skill keys 1-8
+    for i in range(8):
+        if Input.is_action_just_pressed("skill_" + str(i + 1)):
+            _use_skill(i)
+
+func _perform_attack() -> void:
+    # Simple attack - damage nearby enemies
+    if not player:
+        return
+    
+    var attack_range = 50.0
+    var attack_damage = 10
+    
+    for enemy in enemies.get_children():
+        var dist = player.global_position.distance_to(enemy.global_position)
+        if dist < attack_range:
+            var hp = enemy.get_meta("hp", 50)
+            hp -= attack_damage
+            enemy.set_meta("hp", hp)
+            
+            # Knockback
+            var knockback_dir = (enemy.global_position - player.global_position).normalized()
+            enemy.global_position += knockback_dir * 20
+            
+            # Check if enemy died
+            if hp <= 0:
+                enemy.queue_free()
+
+func _use_skill(slot: int) -> void:
+    # Placeholder - skills would use the SkillDatabase
+    print("Skill slot ", slot, " pressed")
 
 func _to_isometric(direction: Vector2) -> Vector2:
     # Convert screen direction to isometric
